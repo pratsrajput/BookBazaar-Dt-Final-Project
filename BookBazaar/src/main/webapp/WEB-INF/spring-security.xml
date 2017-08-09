@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:beans="http://www.springframework.org/schema/beans"
+  xsi:schemaLocation="http://www.springframework.org/schema/security 
+      http://www.springframework.org/schema/security/spring-security.xsd
+      http://www.springframework.org/schema/beans 
+      http://www.springframework.org/schema/beans/spring-beans.xsd">
+      
+   <beans:bean id="myDataSource"
+        class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <beans:property name="driverClassName" value="com.mysql.jdbc.Driver" />
+        <beans:property name="url" value="jdbc:mysql://localhost:3306/shop" />
+        <beans:property name="username" value="root" />
+        <beans:property name="password" value="root" />
+    </beans:bean>
+   
+		<http auto-config="true" use-expressions="true">
+	
+		
+		<intercept-url pattern="/adminhome" access="hasRole('ROLE_ADMIN')" />
+		
+		<!-- <intercept-url pattern="//**" access="hasAnyRole('ROLE_ADMIN','ROLE_USER')" /> -->
+		
+		<form-login 
+		   login-page="/adminlogin"
+		   default-target-url="/adminhome"
+			authentication-failure-url="/AdminLoginError" 
+			login-processing-url="/perform_login"
+			username-parameter="username"
+			password-parameter="password" />
+		
+		<logout logout-url="/logout" logout-success-url="/"  />
+		
+		<csrf disabled="true"/>
+	
+	</http>
+	
+	<!-- Select users and user_roles from database -->
+	<authentication-manager>
+	 <authentication-provider>
+		<jdbc-user-service data-source-ref="myDataSource"
+		 users-by-username-query=
+		   "select username,password,enabled from User where username=? and role='ROLE_ADMIN'"
+		 authorities-by-username-query=
+		   "select username, role from User where username=?" />
+	 </authentication-provider>
+	</authentication-manager>
+	
+	</beans:beans>
+
+	

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<flow xmlns="http://www.springframework.org/schema/webflow"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://www.springframework.org/schema/webflow
+    http://www.springframework.org/schema/webflow/spring-webflow.xsd">
+
+      <var name="shippingAddress" class="com.bookbazaar.model.ShippingAddress"/>
+       <var name="payment" class="com.bookbazaar.model.Payment"/>
+        <var name="orders" class="com.bookbazaar.model.Orders"/>    
+     
+
+    <view-state id="start" view="Address" model="shippingAddress">
+		 <transition on="event1" to="shippingDetails" />
+	</view-state>
+	
+	<action-state id="shippingDetails">
+	<evaluate expression="demohandler.addShippingAddress(orders,shippingAddress)"></evaluate>
+	<transition on="success" to="viewPaymentPage"></transition>
+	</action-state>
+	
+	 <view-state id="viewPaymentPage" view="Payment" model="payment">
+		 <transition on="event2" to="orderconfirm" />
+	</view-state>
+	
+	<action-state id="orderconfirm">
+	<evaluate expression="demohandler.addPaymentMethod(orders,payment)"></evaluate>
+	<transition on="success" to="orderconfirmation"></transition>
+	</action-state>
+	
+	 <view-state id="orderconfirmation" view="OrderConfirm" model="orders">
+		 <transition on="event3" to="thanks" />
+	</view-state>
+	<action-state id="thanks">
+	<evaluate expression="demohandler.addOrder(orders)"></evaluate>
+	<transition on="success" to="thankspage"></transition>
+	</action-state>
+	
+	<view-state id="thankspage" view="Thanks">	
+	</view-state> 
+	
+	
+</flow>
